@@ -1,436 +1,177 @@
-<!DOCTYPE html>
-<html lang="id">
+<!DOCTYPE html><html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.qq0">
-    <title>SOS Game - Son of a Shepherd</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
-            color: #fff;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-        }
-        
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-            width: 100%;
-        }
-        
-        h1 {
-            font-size: 3.5rem;
-            margin-bottom: 10px;
-            text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.5);
-            color: #FFD700;
-        }
-        
-        .subtitle {
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 30px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .game-board {
-            background-color: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            width: 500px;
-        }
-        
-        .board {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            grid-gap: 5px;
-            margin: 20px auto;
-            width: 100%;
-        }
-        
-        .cell {
-            aspect-ratio: 1/1;
-            background-color: rgba(255, 255, 255, 0.15);
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        
-        .cell:hover {
-            background-color: rgba(255, 255, 255, 0.25);
-        }
-        
-        .cell.s {
-            color: #4FC3F7;
-        }
-        
-        .cell.o {
-            color: #FF5252;
-        }
-        
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        button {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 50px;
-            background: linear-gradient(to right, #FF416C, #FF4B2B);
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-        }
-        
-        .game-info {
-            background-color: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            width: 300px;
-        }
-        
-        .players {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-        
-        .player {
-            text-align: center;
-            padding: 15px;
-            border-radius: 10px;
-            width: 48%;
-            transition: all 0.3s ease;
-        }
-        
-        .player.active {
-            background-color: rgba(255, 215, 0, 0.2);
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
-        }
-        
-        .player h3 {
-            margin-bottom: 10px;
-            font-size: 1.2rem;
-        }
-        
-        .score {
-            font-size: 2rem;
-            font-weight: bold;
-        }
-        
-        .instructions {
-            margin-top: 30px;
-            background-color: rgba(0, 0, 0, 0.2);
-            padding: 15px;
-            border-radius: 10px;
-        }
-        
-        .instructions h3 {
-            margin-bottom: 10px;
-            color: #FFD700;
-        }
-        
-        .instructions ul {
-            padding-left: 20px;
-        }
-        
-        .instructions li {
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-        }
-        
-        .current-move {
-            text-align: center;
-            padding: 15px;
-            margin: 15px 0;
-            background-color: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            font-weight: bold;
-        }
-        
-        .message {
-            text-align: center;
-            padding: 10px;
-            margin-top: 15px;
-            border-radius: 10px;
-            font-weight: bold;
-            background-color: rgba(255, 215, 0, 0.2);
-        }
-        
-        footer {
-            margin-top: 40px;
-            text-align: center;
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-        
-        @media (max-width: 900px) {
-            .container {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .game-board, .game-info {
-                width: 100%;
-                max-width: 500px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>SOS GAME</h1>
-        <p class="subtitle">Game strategi klasik untuk dua pemain. Bentuk pola SOS secara horizontal, vertikal, atau diagonal untuk mendapatkan poin!</p>
-    </header>
-    
-    <div class="container">
-        <div class="game-board">
-            <div class="board" id="gameBoard">
-                <!-- Cells will be generated by JavaScript -->
-            </div>
-            
-            <div class="controls">
-                <button id="restartBtn"><i class="fas fa-redo"></i> Mulai Ulang</button>
-                <button id="newGameBtn"><i class="fas fa-plus-circle"></i> Permainan Baru</button>
-            </div>
-        </div>
-        
-        <div class="game-info">
-            <div class="players">
-                <div class="player active" id="player1">
-                    <h3>Pemain 1</h3>
-                    <div class="score">0</div>
-                </div>
-                <div class="player" id="player2">
-                    <h3>Pemain 2</h3>
-                    <div class="score">0</div>
-                </div>
-            </div>
-            
-            <div class="current-move">
-                <p>Giliran: <span id="currentPlayer">Pemain 1</span></p>
-                <p>Pilih: <span id="currentLetter">S atau O</span></p>
-            </div>
-            
-            <div class="message" id="message">
-                Selamat bermain!
-            </div>
-            
-            <div class="instructions">
-                <h3>Cara Bermain:</h3>
-                <ul>
-                    <li>Pemain bergantian menempatkan huruf S atau O pada kotak</li>
-                    <li>Pemain yang berhasil membentuk pola SOS mendapatkan poin</li>
-                    <li>Pola SOS dapat terbentuk secara horizontal, vertikal, atau diagonal</li>
-                    <li>Pemain dengan poin tertinggi saat papan penuh menang</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    
-    <footer>
-        <p>© 2023 SOS Game - Son of a Shepherd | Dibuat dengan <i class="fas fa-heart" style="color: #ff4d4d;"></i></p>
-    </footer>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jadwal Soft Blue</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet"><style>
+:root {
+  --bg1: #f0f7ff;
+  --bg2: #f7fbff;
+  --card: rgba(255,255,255,0.9);
+  --text: #334155;
+  --soft: #94a3b8;
+  --accent: #dbeafe;
+}
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const boardSize = 7;
-            const gameBoard = document.getElementById('gameBoard');
-            const player1Element = document.getElementById('player1');
-            const player2Element = document.getElementById('player2');
-            const currentPlayerElement = document.getElementById('currentPlayer');
-            const currentLetterElement = document.getElementById('currentLetter');
-            const messageElement = document.getElementById('message');
-            const restartBtn = document.getElementById('restartBtn');
-            const newGameBtn = document.getElementById('newGameBtn');
-            
-            let currentPlayer = 1;
-            let scores = [0, 0];
-            let board = [];
-            let gameActive = true;
-            let selectedLetter = 'S';
-            
-            // Initialize the board
-            function initBoard() {
-                gameBoard.innerHTML = '';
-                gameBoard.style.gridTemplateColumns = `repeat(${boardSize}, 1fr)`;
-                
-                board = [];
-                for (let i = 0; i < boardSize; i++) {
-                    board[i] = [];
-                    for (let j = 0; j < boardSize; j++) {
-                        board[i][j] = '';
-                        
-                        const cell = document.createElement('div');
-                        cell.classList.add('cell');
-                        cell.dataset.row = i;
-                        cell.dataset.col = j;
-                        
-                        cell.addEventListener('click', () => cellClicked(i, j));
-                        
-                        gameBoard.appendChild(cell);
-                    }
-                }
-            }
-            
-            // Handle cell click
-            function cellClicked(row, col) {
-                if (!gameActive) return;
-                if (board[row][col] !== '') return;
-                
-                board[row][col] = selectedLetter;
-                updateBoard();
-                
-                // Check for SOS pattern
-                const scored = checkForSOS(row, col);
-                
-                if (!scored) {
-                    // Switch player if no SOS was formed
-                    currentPlayer = currentPlayer === 1 ? 2 : 1;
-                    updateCurrentPlayer();
-                }
-                
-                // Switch letter for next move
-                selectedLetter = selectedLetter === 'S' ? 'O' : 'S';
-                currentLetterElement.textContent = selectedLetter;
-                
-                checkGameOver();
-            }
-            
-            // Update the visual board
-            function updateBoard() {
-                const cells = document.querySelectorAll('.cell');
-                cells.forEach(cell => {
-                    const row = parseInt(cell.dataset.row);
-                    const col = parseInt(cell.dataset.col);
-                    
-                    if (board[row][col] !== '') {
-                        cell.textContent = board[row][col];
-                        cell.classList.add(board[row][col].toLowerCase());
-                    }
-                });
-            }
-            
-            // Check for SOS pattern
-            function checkForSOS(row, col) {
-                // This is a simplified version - in a real game, you'd implement pattern detection
-                // For this demo, we'll randomly decide if an SOS was formed
-                const scored = Math.random() > 0.7;
-                
-                if (scored) {
-                    scores[currentPlayer - 1]++;
-                    updateScores();
-                    messageElement.textContent = `Pemain ${currentPlayer} membentuk SOS! +1 Poin`;
-                }
-                
-                return scored;
-            }
-            
-            // Update player scores
-            function updateScores() {
-                document.querySelector('#player1 .score').textContent = scores[0];
-                document.querySelector('#player2 .score').textContent = scores[1];
-            }
-            
-            // Update current player display
-            function updateCurrentPlayer() {
-                currentPlayerElement.textContent = `Pemain ${currentPlayer}`;
-                
-                player1Element.classList.toggle('active', currentPlayer === 1);
-                player2Element.classList.toggle('active', currentPlayer === 2);
-            }
-            
-            // Check if game is over
-            function checkGameOver() {
-                // Simplified game over check
-                const isBoardFull = board.flat().every(cell => cell !== '');
-                
-                if (isBoardFull) {
-                    gameActive = false;
-                    let winner = scores[0] > scores[1] ? 1 : scores[1] > scores[0] ? 2 : 0;
-                    
-                    if (winner === 0) {
-                        messageElement.textContent = "Permainan Seri!";
-                    } else {
-                        messageElement.textContent = `Pemain ${winner} Menang!`;
-                    }
-                }
-            }
-            
-            // Restart the game
-            restartBtn.addEventListener('click', () => {
-                scores = [0, 0];
-                currentPlayer = 1;
-                selectedLetter = 'S';
-                gameActive = true;
-                
-                initBoard();
-                updateScores();
-                updateCurrentPlayer();
-                currentLetterElement.textContent = selectedLetter;
-                messageElement.textContent = "Selamat bermain!";
-            });
-            
-            // New game
-            newGameBtn.addEventListener('click', () => {
-                if (confirm("Mulai permainan baru? Skor akan direset.")) {
-                    scores = [0, 0];
-                    currentPlayer = 1;
-                    selectedLetter = 'S';
-                    gameActive = true;
-                    
-                    initBoard();
-                    updateScores();
-                    updateCurrentPlayer();
-                    currentLetterElement.textContent = selectedLetter;
-                    messageElement.textContent = "Permainan baru dimulai!";
-                }
-            });
-            
-            // Initialize the game
-            initBoard();
-            updateScores();
-            updateCurrentPlayer();
-            currentLetterElement.textContent = selectedLetter;
-        });
-    </script>
-</body>
+* {
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--bg1), var(--bg2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  width: 360px;
+}
+
+.title {
+  text-align: center;
+  font-weight: 500;
+  margin-bottom: 18px;
+  color: var(--text);
+  font-size: 18px;
+}
+
+.card {
+  background: var(--card);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 15px 16px;
+  margin: 10px 0;
+  cursor: pointer;
+  transition: all 0.35s ease;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.day {
+  font-weight: 500;
+  color: var(--text);
+}
+
+.arrow {
+  transition: 0.3s;
+  color: var(--soft);
+}
+
+.card.active .arrow {
+  transform: rotate(180deg);
+}
+
+.subjects {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: all 0.4s ease;
+}
+
+.card.active .subjects {
+  max-height: 300px;
+  opacity: 1;
+  margin-top: 12px;
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  padding: 9px 12px;
+  border-radius: 12px;
+  margin: 6px 0;
+  background: var(--accent);
+  transform: translateY(8px);
+  opacity: 0;
+  transition: 0.3s ease;
+  font-size: 14px;
+}
+
+.card.active .item {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.item span {
+  font-size: 12px;
+  color: var(--soft);
+}
+
+.card.active .item:nth-child(1) { transition-delay: 0.05s; }
+.card.active .item:nth-child(2) { transition-delay: 0.1s; }
+.card.active .item:nth-child(3) { transition-delay: 0.15s; }
+
+.footer {
+  text-align: center;
+  margin-top: 18px;
+  font-size: 12px;
+  color: var(--soft);
+}
+
+</style></head>
+<body><div class="container"><div class="title">☁️ Jadwal Pelajaran ☁️</div><div class="card" onclick="toggle(this)">
+  <div class="header">
+    <div class="day">Senin</div>
+    <div class="arrow">⌄</div>
+  </div>
+  <div class="subjects">
+    <div class="item">Matematika <span>07:00</span></div>
+    <div class="item">Indonesia <span>09:00</span></div>
+    <div class="item">IPA <span>11:00</span></div>
+  </div>
+</div><div class="card" onclick="toggle(this)">
+  <div class="header">
+    <div class="day">Selasa</div>
+    <div class="arrow">⌄</div>
+  </div>
+  <div class="subjects">
+    <div class="item">Inggris <span>07:00</span></div>
+    <div class="item">IPS <span>09:00</span></div>
+    <div class="item">Olahraga <span>11:00</span></div>
+  </div>
+</div><div class="card" onclick="toggle(this)">
+  <div class="header">
+    <div class="day">Rabu</div>
+    <div class="arrow">⌄</div>
+  </div>
+  <div class="subjects">
+    <div class="item">Matematika <span>07:00</span></div>
+    <div class="item">Seni <span>09:00</span></div>
+  </div>
+</div><div class="card" onclick="toggle(this)">
+  <div class="header">
+    <div class="day">Kamis</div>
+    <div class="arrow">⌄</div>
+  </div>
+  <div class="subjects">
+    <div class="item">IPA <span>07:00</span></div>
+    <div class="item">Indonesia <span>09:00</span></div>
+  </div>
+</div><div class="card" onclick="toggle(this)">
+  <div class="header">
+    <div class="day">Jumat</div>
+    <div class="arrow">⌄</div>
+  </div>
+  <div class="subjects">
+    <div class="item">Agama <span>07:00</span></div>
+    <div class="item">PKN <span>09:00</span></div>
+  </div>
+</div><div class="footer">klik hari untuk melihat jadwal</div></div><script>
+function toggle(el) {
+  el.classList.toggle('active');
+}
+</script></body>
 </html>
